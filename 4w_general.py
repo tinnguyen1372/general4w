@@ -128,18 +128,34 @@ if __name__ == '__main__':
         square_size = 250
         wall_thickness = random.randint(15, 30)
 
+        # Define wall materials with permittivity and conductivity
         wall_materials = {
-            "Concrete": 5.24,
-            "Brick": 3.91,
-            "Plasterboard": 2.73,
-            "Wood": 1.99,
-            "Glass": 6.31,
+            "Concrete": {"permittivity": 5.24, "conductivity": 0.001},
+            "Brick": {"permittivity": 3.91, "conductivity": 0.002},
+            "Plasterboard": {"permittivity": 2.73, "conductivity": 0.0005},
+            "Wood": {"permittivity": 1.99, "conductivity": 0.0002},
+            "Glass": {"permittivity": 6.31, "conductivity": 0.00001},
         }
+
+        # Variance factor for permittivity
         variance_factor = 0.1
+
+        # Randomly select a wall material
         wall_material = random.choice(list(wall_materials.keys()))
-        base_permittivity = wall_materials[wall_material]
+
+        # Get the base permittivity and conductivity
+        base_permittivity = wall_materials[wall_material]["permittivity"]
+        conductivity = wall_materials[wall_material]["conductivity"]
+
+        # Add variability to permittivity
         variance = base_permittivity * variance_factor
         permittivity_wall = round(random.uniform(base_permittivity - variance, base_permittivity + variance), 2)
+
+        # # Print the results
+        # print(f"Wall Material: {wall_material}")
+        # print(f"Permittivity: {permittivity_wall}")
+        # print(f"Conductivity: {conductivity}")
+
         if not os.path.exists('./Geometry_ge'):
             os.makedirs('./Geometry_ge')
         if not os.path.exists('./Geometry_ge/Object'):
@@ -174,6 +190,7 @@ if __name__ == '__main__':
             air_color=air_color,
             object_color=[f_color, s_color, t_color],
             permittivity_wall=permittivity_wall,
+            conductivity_wall=conductivity,
             wall_material=wall_material,
             permittivity_object=per_obj_arr,
         )

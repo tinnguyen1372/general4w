@@ -29,6 +29,7 @@ class Wall_Func():
         self.wall_thickness = args.wall_thickness
         # self.wall_height = args.wall_height
         self.wall_permittivity = args.wall_permittivity
+        self.wall_conductivity = args.wall_conductivity
         self.object_permittivity = args.object_permittivity
         # self.object_width = args.obj_width
         # self.object_height = args.obj_height
@@ -160,7 +161,7 @@ class Wall_Func():
 
         try:
             with open('{}materials.txt'.format('Base_'), "w") as file:
-                file.write('#material: {} 0 1 0 wall\n'.format(self.wall_permittivity))
+                file.write('#material: {} {} 1 0 wall\n'.format(self.wall_permittivity, self.wall_conductivity))
             self.preprocess(self.basefile)
         except Exception as e:
             print(e)
@@ -264,7 +265,7 @@ geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.
 
         try:
             with open('{}materials.txt'.format('Obj_'), "w") as file:
-                file.write('#material: {} 0 1 0 wall\n'.format(self.wall_permittivity))
+                file.write('#material: {} {} 1 0 wall\n'.format(self.wall_permittivity, self.wall_conductivity))
                 for i in range(len(self.object_permittivity)):
                     file.write('#material: {} 0 1 0 Object{}\n'.format(self.object_permittivity[i],i))          
                 self.preprocess(self.geofile)
@@ -381,12 +382,13 @@ if __name__ == "__main__":
     parser.add_argument('--end', type=int, default=15, help='End of the generated geometry')
     # data = np.load('SL_Objgeall_0_699.npz', allow_pickle=True)
     # data = np.load('SL_Objgeall_700_1500.npz', allow_pickle=True)
-    data = np.load('Geometry_ge/4w_multi_0_100.npz', allow_pickle=True)
+    data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
     args = parser.parse_args()
     for i in range(0, args.end - args.start + 1):
         args.square_size = data['params'][i]['square_size']/100
         args.wall_thickness = data['params'][i]['wall_thickness']/100
         args.wall_permittivity = round(data['params'][i]['permittivity_wall'], 2)
+        args.wall_conductivity = round(data['params'][i]['conductivity_wall'], 4)
         args.object_permittivity = [round(p, 2) for p in data['params'][i]['permittivity_object']]
     # start  adaptor
         args.i = i + args.start
