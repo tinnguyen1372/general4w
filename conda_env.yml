@@ -1,0 +1,19 @@
+name: gprMax
+dependencies:
+  - python>3.6
+  - colorama
+  - cython
+  - h5py
+  - jupyter
+  - matplotlib
+  - numpy
+  - pip
+  - psutil
+  - scipy
+
+  - pip:
+    - terminaltables
+    - tqdm
+    - gprmax
+    # - mpi4py
+    # - pycuda

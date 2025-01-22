@@ -1,0 +1,179 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import argparse
+import random
+from matplotlib.colors import ListedColormap
+from scipy.ndimage import rotate
+import os
+
+def create_geometry(square_size, air_size, wall_thickness):
+    # Initialize the square room with walls
+    geometry = np.ones((square_size, square_size), dtype=int)
+
+    # Set the air region
+    air_start = (square_size - air_size) // 2
+    air_end = air_start + air_size
+    geometry[air_start + wall_thickness:air_end - wall_thickness, air_start + wall_thickness:air_end - wall_thickness] = 0  # Air is represented by 1
+
+    return geometry, air_start, air_end
+
+def add_random_shape(i, geometry, air_start, air_end, wall_thickness):
+    permittivity_object = random.uniform(4, 40.0)
+    objwall_gap = 50  # Gap between object and wall
+    shape = random.choice(["rectangle", "triangle", "circle"])
+    rect_width = random.randint(30, 50)
+    rect_height = random.randint(30, 50)
+    rect_y = random.randint(air_start + wall_thickness + objwall_gap, air_end - rect_height - square_size//4)
+    rect_x = random.randint(air_start + int(6*square_size/22), air_end - rect_width - int(6*square_size/22))
+    rotation_angle = random.randint(0, 360)
+
+    # Define a blank canvas for the shape
+    shape_canvas = np.zeros_like(geometry)
+
+    if shape == "rectangle":
+        shape_canvas[rect_y:rect_y + rect_height, rect_x:rect_x + rect_width] = int(i) + 2
+
+    elif shape == "triangle":
+        for y in range(rect_height):
+            for x in range(rect_width - y):
+                shape_canvas[rect_y + y, rect_x + x] = int(i) + 2
+
+    elif shape == "circle":
+        radius = min(rect_width, rect_height) // 2
+        x_center, y_center = rect_x + radius, rect_y + radius
+        for y in range(-radius, radius):
+            for x in range(-radius, radius):
+                if x**2 + y**2 <= radius**2:
+                    shape_canvas[y_center + y, x_center + x] = int(i) + 2
+
+    # Rotate the shape
+    rotated_shape = rotate(shape_canvas, angle=rotation_angle, reshape=False, order=0)
+
+    # Add the shape to the geometry, ensuring no overlap with walls
+    geometry[rotated_shape > 1] = rotated_shape[rotated_shape > 1]
+
+    return permittivity_object, shape, geometry
+
+def visualize_geometry(geometry, wall_color, air_color, f_color, s_color, t_color):
+    cmap = ListedColormap([
+        air_color, 
+        wall_color, 
+        f_color, 
+        s_color, 
+        t_color
+    ])
+    plt.figure(figsize=(10, 10))
+    plt.imshow(geometry, cmap=cmap, origin='lower')
+    plt.title('Geometry with Square Walls and Random Shapes')
+    plt.axis('off')
+    plt.show()
+
+def save_image(filename, numobjects, geometry, square_size, wall_color, air_color, f_color, s_color, t_color):
+    cmap = ListedColormap([
+        air_color, 
+        wall_color, 
+        f_color,
+        s_color,
+        t_color
+    ][:numobjects + 2])
+    plt.figure(figsize=(10, 10))
+    plt.imshow(geometry, cmap=cmap, origin='lower')
+    plt.xlabel('x(t)')
+    plt.ylabel('y(t)')
+    plt.axis('off')    
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    plt.savefig(filename, format='png', dpi=square_size / 10, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
+def save_base(filename, geometry, square_size, wall_color, air_color):
+    cmap = ListedColormap([air_color,wall_color])    
+    plt.figure(figsize=(10, 10))
+    plt.imshow(geometry, cmap=cmap, origin='lower')
+    plt.xlabel('x(t)')
+    plt.ylabel('y(t)')
+    plt.axis('off')    
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    plt.savefig(filename, format='png', dpi=square_size / 10, bbox_inches='tight', pad_inches=0)
+    plt.close()
+
+def save_parameters(filename, **params):
+    if os.path.exists(filename):
+        existing_data = np.load(filename, allow_pickle=True)
+        all_params = list(existing_data['params'])
+    else:
+        all_params = []
+
+    all_params.append(params)
+
+    with open(filename, 'wb') as f:
+        np.savez(f, params=all_params)
+
+if __name__ == '__main__':
+    # Predefined colors
+    wall_color = [1, 1, 0]   # Wall color
+    air_color = [1, 1, 1]    # Air color
+    f_color = [1, 0, 0]      # First shape color
+    s_color = [0, 1, 0]      # Second shape color
+    t_color = [0, 0, 1]      # Third shape color
+
+    # Argument parsing
+    parser = argparse.ArgumentParser(description='Generate and visualize geometries with random shapes.')
+    parser.add_argument('--start', type=int, default=0, help='Starting index for geometry generation')
+    parser.add_argument('--end', type=int, default=10, help='Ending index for geometry generation')
+    args = parser.parse_args()
+
+    args.n = args.end + 1 - args.start
+
+    for i in range(args.n):
+        square_size = 250
+        wall_thickness = random.randint(15, 30)
+
+        wall_materials = {
+            "Concrete": 5.24,
+            "Brick": 3.91,
+            "Plasterboard": 2.73,
+            "Wood": 1.99,
+            "Glass": 6.31,
+        }
+        variance_factor = 0.1
+        wall_material = random.choice(list(wall_materials.keys()))
+        base_permittivity = wall_materials[wall_material]
+        variance = base_permittivity * variance_factor
+        permittivity_wall = round(random.uniform(base_permittivity - variance, base_permittivity + variance), 2)
+        if not os.path.exists('./Geometry_ge'):
+            os.makedirs('./Geometry_ge')
+        if not os.path.exists('./Geometry_ge/Object'):
+            os.makedirs('./Geometry_ge/Object')
+        if not os.path.exists('./Geometry_ge/Base'):
+            os.makedirs('./Geometry_ge/Base')
+
+        filename = f'./Geometry_ge/Object/geometry{i + args.start}.png'
+        base = f'./Geometry_ge/Base/base{i + args.start}.png'
+        params_filename = f'./Geometry_ge/4w_multi_{args.start}_{args.end}.npz'
+
+        geometry, air_start, air_end = create_geometry(square_size, square_size, wall_thickness)
+
+        save_base(base, geometry, square_size, wall_color, air_color)
+
+        per_obj_arr = []
+        shape_arr = []
+        num_objects = random.randint(1, 3)
+        for j in range(num_objects):
+            per_obj, shape, geometry = add_random_shape(j, geometry, air_start, air_end, wall_thickness)
+            per_obj_arr.append(per_obj)
+            shape_arr.append(shape)
+
+        save_image(filename,num_objects, geometry, square_size, wall_color, air_color, f_color, s_color, t_color)
+
+        save_parameters(
+            params_filename,
+            shape=shape_arr,
+            square_size=square_size,
+            wall_thickness=wall_thickness,
+            wall_color=wall_color,
+            air_color=air_color,
+            object_color=[f_color, s_color, t_color],
+            permittivity_wall=permittivity_wall,
+            wall_material=wall_material,
+            permittivity_object=per_obj_arr,
+        )
