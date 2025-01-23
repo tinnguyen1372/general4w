@@ -383,15 +383,18 @@ if __name__ == "__main__":
     # data = np.load('SL_Objgeall_0_699.npz', allow_pickle=True)
     # data = np.load('SL_Objgeall_700_1500.npz', allow_pickle=True)
     data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
+    # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
+    datasetvalue = 0
     args = parser.parse_args()
-    for i in range(0, args.end - args.start + 1):
+    for i in range(args.start, args.end - args.start + 1):
+        i = i - datasetvalue
         args.square_size = data['params'][i]['square_size']/100
         args.wall_thickness = data['params'][i]['wall_thickness']/100
         args.wall_permittivity = round(data['params'][i]['permittivity_wall'], 2)
         args.wall_conductivity = round(data['params'][i]['conductivity_wall'], 4)
         args.object_permittivity = [round(p, 2) for p in data['params'][i]['permittivity_object']]
+        args.i = i + datasetvalue
     # start  adaptor
-        args.i = i + args.start
         wallimg = Wall_Func(args=args)
         print(args)
         # wallimg.view_geometry()
