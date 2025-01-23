@@ -386,7 +386,7 @@ if __name__ == "__main__":
     # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
     datasetvalue = 0
     args = parser.parse_args()
-    for i in range(args.start, args.end - args.start + 1):
+    for i in range(args.start, args.end - args.start):
         i = i - datasetvalue
         args.square_size = data['params'][i]['square_size']/100
         args.wall_thickness = data['params'][i]['wall_thickness']/100
