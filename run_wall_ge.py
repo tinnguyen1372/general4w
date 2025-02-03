@@ -12,6 +12,7 @@ from matplotlib.colors import ListedColormap
 import argparse
 import random
 import os
+import itertools
 
 
 
@@ -105,13 +106,23 @@ class Wall_Func():
         # img.show()
         # print(self.pix)
         # Define the color map with a tolerance
+
+        # Base color map
         color_map = {
             (255, 255, 255): -1,  # White (transparent)
             (255, 255, 0): 0,     # Yellow
-            (255, 0, 0): 1,      # Red
-            (0, 255, 0): 2,     # Green
-            (0, 0, 255): 3,      # Blue
+            (255, 0, 0): 1,       # Red
+            (0, 255, 0): 2,       # Green
+            (0, 0, 255): 3,       # Blue
         }
+
+        # Limit the dictionary to needed size
+        needed_size = len(self.object_permittivity) + 2
+        color_map = dict(itertools.islice(color_map.items(), needed_size))
+
+        # Print for debuggings
+        # print(color_map)
+
         def find_most_similar_color(pixel_color, color_map, threshold):
             closest_color = None
 
@@ -124,7 +135,7 @@ class Wall_Func():
             else:
                 return 0  # Return None when no similar color is found
         # Define the threshold
-        threshold = 30  # Adjust this threshold value as needed
+        threshold = 100  # Adjust this threshold value as needed
 
         arr_2d = np.zeros((self.pix, self.pix), dtype=int)
         img_resized = img.resize((self.pix, self.pix))
@@ -398,5 +409,5 @@ if __name__ == "__main__":
         wallimg = Wall_Func(args=args)
         print(args)
         # wallimg.view_geometry()
-        wallimg.run_base()
+        # wallimg.run_base()
         wallimg.run_2D()
