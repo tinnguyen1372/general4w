@@ -360,29 +360,29 @@ geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.
             fig.tight_layout(pad=0)  # Remove any extra padding
             plt.savefig(f'./WallObj_ge/Wall_Obj{self.i}' + ".png")
 
-            data1 = np.subtract(data1, data_source)
+            # data1 = np.subtract(data1, data_source)
 
-            with h5py.File(output_file, 'w') as f_out:
-                f_out.attrs['dt'] = dt  # Set the time step attribute
-                f_out.create_dataset('rxs/rx1/Ez', data=data1)
+            # with h5py.File(output_file, 'w') as f_out:
+            #     f_out.attrs['dt'] = dt  # Set the time step attribute
+            #     f_out.create_dataset('rxs/rx1/Ez', data=data1)
 
-            # Draw data with normal plot
-            rxnumber = 1
-            rxcomponent = 'Ez'
-            plt = mpl_plot_Bscan("merged_output_data", data1, dt, rxnumber,rxcomponent)
+            # # Draw data with normal plot
+            # rxnumber = 1
+            # rxcomponent = 'Ez'
+            # plt = mpl_plot_Bscan("merged_output_data", data1, dt, rxnumber,rxcomponent)
             
-            fig_width = 15
-            fig_height = 15
+            # fig_width = 15
+            # fig_height = 15
 
-            fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+            # fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
-            plt.imshow(data1, cmap='gray', aspect='auto')
-            plt.axis('off')
-            ax.margins(0, 0)  # Remove any extra margins or padding
-            fig.tight_layout(pad=0)  # Remove any extra padding
+            # plt.imshow(data1, cmap='gray', aspect='auto')
+            # plt.axis('off')
+            # ax.margins(0, 0)  # Remove any extra margins or padding
+            # fig.tight_layout(pad=0)  # Remove any extra padding
 
-            os.rename(output_file, f'./Output_ge/Object/Obj{self.i}.out')
-            plt.savefig(f'./ObjImg_ge/Obj{self.i}' + ".png")
+            # os.rename(output_file, f'./Output_ge/Object/Obj{self.i}.out')
+            # plt.savefig(f'./ObjImg_ge/Obj{self.i}' + ".png")
         except Exception as e:
             print(e)
 
@@ -393,9 +393,9 @@ if __name__ == "__main__":
     parser.add_argument('--end', type=int, default=15, help='End of the generated geometry')
     # data = np.load('SL_Objgeall_0_699.npz', allow_pickle=True)
     # data = np.load('SL_Objgeall_700_1500.npz', allow_pickle=True)
-    data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
-    # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
-    datasetvalue = 0
+    # data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
+    data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
+    datasetvalue = 1000
     args = parser.parse_args()
     for i in range(args.start, args.end):
         i = i - datasetvalue
