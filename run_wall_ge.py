@@ -341,8 +341,8 @@ geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.
                 dt = f1.attrs['dt']
                 f1.close()
 
-            with h5py.File(f'./Output_ge/Base/Base{self.i}.out', 'r') as f1:
-                data_source = f1['rxs']['rx1']['Ez'][()]
+            # with h5py.File(f'./Output_ge/Base/Base{self.i}.out', 'r') as f1:
+            #     data_source = f1['rxs']['rx1']['Ez'][()]
 
             with h5py.File(uncleaned_output_file, 'w') as f_out:
                 f_out.attrs['dt'] = dt  # Set the time step attribute
