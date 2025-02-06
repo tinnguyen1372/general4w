@@ -229,6 +229,7 @@ geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.
         try:
             merge_files(str(self.input.replace('.in','')), True)
             output_file =str(self.input.replace('.in',''))+ '_merged.out'
+            base_output_file = f'./Output_ge/Base/Base{self.i}.out'
             dt = 0
 
             with h5py.File(output_file, 'r') as f1:
@@ -251,7 +252,9 @@ geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.
             fig.tight_layout(pad=0)  # Remove any extra padding
 
 
-            os.rename(output_file, f'./Output_ge/Base/Base{self.i}.out')
+            with h5py.File(base_output_file, 'w') as f_out:
+                f_out.attrs['dt'] = dt  # Set the time step attribute
+                f_out.create_dataset('rxs/rx1/Ez', data=data1)
             plt.savefig(f'./BaseImg_ge/Base{self.i}' + ".png")
         except Exception as e:
             print(e)
