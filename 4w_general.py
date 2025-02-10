@@ -5,6 +5,7 @@ import random
 from matplotlib.colors import ListedColormap
 from scipy.ndimage import rotate
 import os
+from scipy.ndimage import convolve
 
 def create_geometry(square_size, air_size, wall_thickness):
     # Initialize the square room with walls
@@ -21,8 +22,8 @@ def add_random_shape(i, geometry, air_start, air_end, wall_thickness):
     permittivity_object = random.uniform(4, 40.0)
     objwall_gap = 50  # Gap between object and wall
     shape = random.choice(["rectangle", "triangle", "circle"])
-    rect_width = random.randint(30, 50)
-    rect_height = random.randint(30, 50)
+    rect_width = random.randint(30, 40)
+    rect_height = random.randint(30, 40)
     rect_y = random.randint(air_start + wall_thickness + objwall_gap, air_end - rect_height - square_size//4)
     rect_x = random.randint(air_start + int(6*square_size/22), air_end - rect_width - int(6*square_size/22))
     rotation_angle = random.randint(0, 360)
@@ -49,8 +50,18 @@ def add_random_shape(i, geometry, air_start, air_end, wall_thickness):
     # Rotate the shape
     rotated_shape = rotate(shape_canvas, angle=rotation_angle, reshape=False, order=0)
 
-    # Add the shape to the geometry, ensuring no overlap with walls
-    geometry[rotated_shape > 1] = rotated_shape[rotated_shape > 1]
+
+    # Define a 5x5 kernel for checking neighborhood
+    kernel = np.ones((10, 10), dtype=int)
+
+    # Create a mask where nonzero values exist in a 5x5 neighborhood
+    nonzero_mask = convolve((geometry > 0).astype(int), kernel, mode='constant', cval=0) > 0
+
+    # Valid positions are where geometry is 0 and no nonzero values exist in a 5x5 region
+    valid_positions = (geometry == 0) & (~nonzero_mask)
+
+    # Add the shape only in valid positions
+    geometry[valid_positions & (rotated_shape > 1)] = rotated_shape[valid_positions & (rotated_shape > 1)]
 
     return permittivity_object, shape, geometry
 
