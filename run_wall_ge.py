@@ -396,9 +396,9 @@ if __name__ == "__main__":
     parser.add_argument('--end', type=int, default=15, help='End of the generated geometry')
     # data = np.load('SL_Objgeall_0_699.npz', allow_pickle=True)
     # data = np.load('SL_Objgeall_700_1500.npz', allow_pickle=True)
-    data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
-    # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
-    datasetvalue = 0
+    # data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
+    data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
+    datasetvalue = 1000
     args = parser.parse_args()
     for i in range(args.start, args.end):
         i = i - datasetvalue
@@ -412,5 +412,5 @@ if __name__ == "__main__":
         wallimg = Wall_Func(args=args)
         print(args)
         # wallimg.view_geometry()
-        # wallimg.run_base()
+        wallimg.run_base()
         wallimg.run_2D()
