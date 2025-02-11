@@ -397,8 +397,9 @@ if __name__ == "__main__":
     # data = np.load('SL_Objgeall_0_699.npz', allow_pickle=True)
     # data = np.load('SL_Objgeall_700_1500.npz', allow_pickle=True)
     # data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
-    data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
-    datasetvalue = 1000
+    # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
+    data = np.load('Geometry_ge/4w_multi_2000_3999.npz', allow_pickle=True)
+    datasetvalue = 2000
     args = parser.parse_args()
     for i in range(args.start, args.end):
         i = i - datasetvalue
