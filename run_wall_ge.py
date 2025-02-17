@@ -204,7 +204,7 @@ Source - Receiver - Waveform
 
 Geometry objects read
 
-#geometry_objects_read: {pml + src_to_pml + 0.1:.3f} {self.square_size/2:.3f} {0:.3f} ./Geometry_ge/geometry_2d.h5 Base_materials.txt
+#geometry_objects_read: {pml + src_to_pml + 0.1:.3f} {self.square_size/2:.3f} {0:.3f} Geometry_ge/geometry_2d.h5 Base_materials.txt
 geometry_objects_write: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} Base 
 geometry_view: 0 0 0 {domain_2d[0]:.3f} {domain_2d[1]:.3f} {domain_2d[2]:.3f} 0.005 0.005 0.005 Base n
 
