@@ -20,13 +20,26 @@ def create_geometry(square_size, air_size, wall_thickness):
 
 def add_random_shape(i, geometry, air_start, air_end, wall_thickness):
     permittivity_object = random.uniform(4, 40.0)
-    objwall_gap = 50  # Gap between object and wall
+    objwall_gap = 25  # Gap between object and wall
     shape = random.choice(["rectangle", "triangle", "circle"])
     rect_width = random.randint(30, 40)
     rect_height = random.randint(30, 40)
-    rect_y = random.randint(air_start + wall_thickness + objwall_gap, air_end - rect_height - square_size//4)
-    rect_x = random.randint(air_start + int(6*square_size/22), air_end - rect_width - int(6*square_size/22))
-    rotation_angle = random.randint(0, 360)
+    # rect_y = random.randint(air_start + wall_thickness + objwall_gap, air_end - rect_height - square_size//4)
+    # # rect_x = random.randint(air_start + int(6*square_size/22), air_end - rect_width - int(6*square_size/22))
+    # rect_x = 200
+
+    if i == 0:
+        rect_y = random.randint(135, air_end - rect_height - square_size//4)
+        rect_x = random.randint(air_start + int(6*square_size/22), air_end - rect_width - int(6*square_size/22))
+    elif i == 1:
+        rect_y = random.randint(air_start + wall_thickness + objwall_gap, 125 - rect_height)
+        rect_x = random.randint(air_start + int(6*square_size/22), 125 - rect_width)
+    elif i == 2:
+        rect_y = random.randint(air_start + wall_thickness + objwall_gap, 125 - rect_height)
+        rect_x = random.randint(135, air_end - rect_width - int(5*square_size/22))
+
+    # rotation_angle = random.randint(0, 360)
+    rotation_angle = 0
 
     # Define a blank canvas for the shape
     shape_canvas = np.zeros_like(geometry)
