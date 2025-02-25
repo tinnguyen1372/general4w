@@ -399,6 +399,7 @@ if __name__ == "__main__":
     # data = np.load('Geometry_ge/4w_multi_0_999.npz', allow_pickle=True)
     # data = np.load('Geometry_ge/4w_multi_1000_1999.npz', allow_pickle=True)
     # data = np.load('Geometry_ge/4w_multi_0_4999.npz', allow_pickle=True)
+    data = np.load('Geometry_ge/4w_multi_5000_10999.npz', allow_pickle=True)
     datasetvalue = 5000
     args = parser.parse_args()
     for i in range(args.start, args.end):
